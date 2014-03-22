@@ -10,6 +10,8 @@ import com.facebook.UiLifecycleHelper;
 
 /**
  * Created by Tim Sandberg on 3/20/14.
+ * This is the 'splash screen' fragment
+ * containing LoginButton.
  */
 
 public class LoginFragment extends Fragment {
