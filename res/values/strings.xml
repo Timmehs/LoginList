@@ -29,4 +29,7 @@
     <string name="com_facebook_requesterror_password_changed">Your Facebook password has changed. Please log into this app again to reconnect your Facebook account.</string>
     <string name="com_facebook_requesterror_reconnect">Please log into this app again to reconnect your Facebook account.</string>
     <string name="com_facebook_requesterror_permissions">This app doesn’t have permission to do this. To change permissions, try logging into the app again.</string>
+    <string name="logout_prompt">Are you sure you want to log out?</string>
+    <string name="logout_confirm">Log out</string>
+    <string name="logout_cancel">Cancel</string>
 </resources>

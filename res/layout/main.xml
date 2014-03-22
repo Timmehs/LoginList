@@ -6,8 +6,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-    <fragment android:name="com.tim.loginlist.SelectionFragment"
-              android:id="@+id/selectionFragment"
+    <fragment android:name="com.tim.loginlist.FriendlistFragment"
+              android:id="@+id/friendlistFragment"
               android:layout_width="match_parent"
               android:layout_height="match_parent" />
     <fragment android:name="com.tim.loginlist.LoginFragment"

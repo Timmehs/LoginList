@@ -1,13 +1,17 @@
 package com.tim.loginlist;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,14 +29,15 @@ import java.util.List;
 /**
  * Created by Tim Sandberg on 3/21/14.
  */
-public class SelectionFragment extends Fragment {
-    private static final String TAG = "SelectionFragment";
+public class FriendlistFragment extends Fragment {
+    private static final String TAG = "FriendlistFragment";
     private TextView welcome;
     private ProfilePictureView profilePictureView;
     private TextView userNameView;
     private static final int REAUTH_ACTIVITY_CODE = 100;
     private static List<Friend> friends;
-    private static ActionListAdapter adapter;
+    private static FriendlistAdapter adapter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,22 +51,57 @@ public class SelectionFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         Log.d(TAG, "onCreateView()");
-        View v = inflater.inflate(R.layout.selection,
+        View v = inflater.inflate(R.layout.fragment_friendlist,
                 container, false);
         ListView friendsList = (ListView) v.findViewById(R.id.friendsList);
+
         friends = new ArrayList<Friend>();
-        adapter = new ActionListAdapter(getActivity(), R.id.friendsList, friends);
+        adapter = new FriendlistAdapter(getActivity(), R.id.friendsList, friends);
         friendsList.setAdapter(adapter);
+        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Friend friend = (Friend) parent.getItemAtPosition(position);
+                String facebookScheme = "fb://profile/" + friend.getId();
+                Intent facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookScheme));
+                startActivity(facebookIntent);
+            }
+        });
         Session session = Session.getActiveSession();
         if (session != null && session.isOpened()) {
             makeMeRequest(session);
         }
-
         setRetainInstance(true);
-
+        setHasOptionsMenu(true);
         return v;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.logout_menu_item:
+                LogoutConfirm lc = new LogoutConfirm();
+                lc.show(getActivity().getSupportFragmentManager(), "Log out?");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    /*
+    * Creates Me Request and pulls friendslist as Graph Object if successful
+    *
+    */
     private void makeMeRequest(final Session session) {
         Request request = Request.newMeRequest(session,
                 new Request.GraphUserCallback() {
@@ -70,7 +110,6 @@ public class SelectionFragment extends Fragment {
                         if (session == Session.getActiveSession()) {
                             Log.d(TAG, "Response successful");
                             String request_string = user.getId() + "/friends";
-                            Log.d(TAG, "Request string: " + request_string);
                             if (user != null) {
                                 new Request(
                                         session,
@@ -95,6 +134,9 @@ public class SelectionFragment extends Fragment {
         request.executeAsync();
     }
 
+    /* Parses data from facebook request response into friend objects, stores to
+    *  List<Friends> friends.
+    */
    private void parseFriends(Response response) {
        GraphObject graphObject = response.getGraphObject();
        if (graphObject != null) {
@@ -107,8 +149,6 @@ public class SelectionFragment extends Fragment {
                            object.getString("name"),
                            object.getString("id"));
                    friends.add(friend);
-                   Log.d(TAG, "Added " + friend.getName());
-
                }
                adapter.notifyDataSetChanged();
            } catch (JSONException e) {
@@ -166,11 +206,11 @@ public class SelectionFragment extends Fragment {
         uiHelper.onDestroy();
     }
 
-    private class ActionListAdapter extends ArrayAdapter<Friend> {
+    private class FriendlistAdapter extends ArrayAdapter<Friend> {
 
         private List<Friend> listElements;
 
-        public ActionListAdapter(Context context, int resourceId,
+        public FriendlistAdapter(Context context, int resourceId,
                                  List<Friend> listElements) {
             super(context, resourceId, listElements);
             this.listElements = listElements;
@@ -191,21 +231,40 @@ public class SelectionFragment extends Fragment {
             if (listElement != null) {
                 ProfilePictureView ppv = (ProfilePictureView) view.findViewById(R.id.friend_pic);
                 TextView friendName = (TextView) view.findViewById(R.id.friend_name);
-                TextView friendLocation = (TextView) view.findViewById(R.id.friend_location);
-
                 if (ppv != null) {
                     ppv.setProfileId(listElement.getId());
                 }
                 if (friendName != null) {
                     friendName.setText(listElement.getName());
                 }
-                if (friendLocation != null) {
 
-                }
             }
             return view;
         }
     }
 
+
+    //Dialog fragment for logout confirmation
+    private class LogoutConfirm extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.logout_prompt)
+                    .setPositiveButton(R.string.logout_confirm, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Session sesh = Session.getActiveSession();
+                            sesh.closeAndClearTokenInformation();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
 }
 
