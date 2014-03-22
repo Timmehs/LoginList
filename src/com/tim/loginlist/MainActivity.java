@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.widget.Toast;
 import com.facebook.*;
 
 
@@ -35,6 +34,7 @@ public class MainActivity extends FragmentActivity {
         Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
 
 
+
         session = Session.getActiveSession();
         if (session == null) {
             if (savedInstanceState != null) {
@@ -42,6 +42,7 @@ public class MainActivity extends FragmentActivity {
             } else {
                 session = new Session(this);
             }
+
             Session.setActiveSession(session);
             if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
                 session.openForRead(new Session.OpenRequest(this).setCallback(callback));
@@ -52,12 +53,12 @@ public class MainActivity extends FragmentActivity {
 
 
         FragmentManager fm = getSupportFragmentManager();
-        fragments[LOGIN] = fm.findFragmentById(R.id.splashFragment);
+        fragments[LOGIN] = fm.findFragmentById(R.id.loginFragment);
         fragments[FRIENDLIST] = fm.findFragmentById(R.id.friendlistFragment);
 
         FragmentTransaction transaction = fm.beginTransaction();
-        for(Fragment f : fragments) {
-            transaction.hide(f);
+        for(int i = 0; i < fragments.length; i++) {
+            transaction.hide(fragments[i]);
         }
         transaction.commit();
     }
@@ -100,13 +101,17 @@ public class MainActivity extends FragmentActivity {
     protected void onResumeFragments() {
         super.onResumeFragments();
         Session session = Session.getActiveSession();
-
+        FragmentManager manager = getSupportFragmentManager();
+        int backStackSize = manager.getBackStackEntryCount();
+        // Clear the back stack
+        for (int i = 0; i < backStackSize; i++) {
+            manager.popBackStack();
+        }
         if (session != null && session.isOpened()) {
             // if the session is already open,
             // try to show the fragment_friendlist fragment
             showFragment(FRIENDLIST, false);
         } else {
-            Toast.makeText(this, "Session aint open",Toast.LENGTH_SHORT).show();
             // otherwise present the splash screen
             // and ask the person to login.
             showFragment(LOGIN, false);
@@ -130,6 +135,8 @@ public class MainActivity extends FragmentActivity {
         transaction.commit();
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -148,7 +155,6 @@ public class MainActivity extends FragmentActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(this, "Activity Result", Toast.LENGTH_SHORT).show();
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
     }
 
@@ -156,7 +162,6 @@ public class MainActivity extends FragmentActivity {
     public void onDestroy() {
         super.onDestroy();
         uiHelper.onDestroy();
-
     }
 
     @Override
