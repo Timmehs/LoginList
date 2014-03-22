@@ -90,9 +90,10 @@ public class MainActivity extends FragmentActivity {
                 // Show the authenticated fragment
                 showFragment(FRIENDLIST, false);
             } else if (state.isClosed()) {
-                // If the session state is closed:
-                // Show the login fragment
-                showFragment(LOGIN, true);
+                for (int i = 0; i < backStackSize; i++) {
+                    manager.popBackStack();
+                }
+                showFragment(LOGIN, false);
             }
         }
     }
@@ -114,6 +115,9 @@ public class MainActivity extends FragmentActivity {
         } else {
             // otherwise present the splash screen
             // and ask the person to login.
+            for (int i = 0; i < backStackSize; i++) {
+                manager.popBackStack();
+            }
             showFragment(LOGIN, false);
         }
     }
@@ -168,6 +172,12 @@ public class MainActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
 
