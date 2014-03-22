@@ -24,6 +24,7 @@ public class LoginFragment extends Fragment {
         super.onCreateView(inflater, container,savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_login,
                 container, false);
+        setRetainInstance(true);
 
         return view;
     }

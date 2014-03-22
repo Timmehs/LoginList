@@ -33,9 +33,8 @@ public class MainActivity extends FragmentActivity {
     private boolean isResumed = false;
     private static final String TAG = "MainActivity";
     private MenuItem settings;
-
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
-
+    public static final String SHARED_PREFERENCES = "Shared Preferences";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,6 @@ public class MainActivity extends FragmentActivity {
                 session.openForRead(new Session.OpenRequest(this).setCallback(callback));
             }
         }
-
 
 
         FragmentManager fm = getSupportFragmentManager();
@@ -182,7 +180,7 @@ public class MainActivity extends FragmentActivity {
     public void onDestroy() {
         super.onDestroy();
         uiHelper.onDestroy();
-        Session.getActiveSession().closeAndClearTokenInformation();
+
     }
 
     @Override

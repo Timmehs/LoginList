@@ -53,17 +53,16 @@ public class SelectionFragment extends Fragment {
         adapter = new ActionListAdapter(getActivity(), R.id.friendsList, friends);
         friendsList.setAdapter(adapter);
         Session session = Session.getActiveSession();
-
         if (session != null && session.isOpened()) {
             makeMeRequest(session);
-
         }
+
+        setRetainInstance(true);
 
         return v;
     }
 
     private void makeMeRequest(final Session session) {
-
         Request request = Request.newMeRequest(session,
                 new Request.GraphUserCallback() {
                     @Override
