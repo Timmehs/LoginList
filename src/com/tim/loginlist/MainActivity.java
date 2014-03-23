@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 import com.facebook.*;
 
 import java.security.MessageDigest;
@@ -189,12 +188,7 @@ public class MainActivity extends FragmentActivity {
         uiHelper.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
         String report;
-        if(Session.getActiveSession().isOpened()) {
-            report = "Session opened";
-        } else {
-            report = "Session not opened, login failed?";
-        }
-        Toast.makeText(this, report, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
