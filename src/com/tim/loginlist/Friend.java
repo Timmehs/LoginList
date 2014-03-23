@@ -1,6 +1,8 @@
 package com.tim.loginlist;
 
 /**
+ * Data structure to hold friend info,
+ * acting as list elements for friend list.
  * Created by Tim Sandberg on 3/21/14.
  */
 public class Friend {

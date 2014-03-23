@@ -1,28 +1,41 @@
 package com.tim.loginlist;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.util.Log;
 import com.facebook.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 /**
- * Created by Tim Sandberg on 3/20/14.
+ * @author      Tim Sandberg <tasandberg@gmail.com>
+ * @version     1.0
+ * @created     2014-3-20
  */
 
-
 public class MainActivity extends FragmentActivity {
+
+    /**
+     * Fragment index references and array
+     */
     private static final int LOGIN = 0;
     private static final int FRIENDLIST = 1;
     private static final int FRAGMENT_COUNT = FRIENDLIST + 1;
+    private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
+
     private boolean isResumed = false;
     private static final String TAG = "MainActivity";
-    private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
-    public static Session session;
+    private Session session;
 
 
 
@@ -33,6 +46,20 @@ public class MainActivity extends FragmentActivity {
         uiHelper = new UiLifecycleHelper(this, callback);
         Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
 
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.tim.loginlist",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
 
 
         session = Session.getActiveSession();
@@ -115,9 +142,6 @@ public class MainActivity extends FragmentActivity {
         } else {
             // otherwise present the splash screen
             // and ask the person to login.
-            for (int i = 0; i < backStackSize; i++) {
-                manager.popBackStack();
-            }
             showFragment(LOGIN, false);
         }
     }
@@ -152,7 +176,6 @@ public class MainActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
         uiHelper.onPause();
-        isResumed = false;
     }
 
     @Override

@@ -4,6 +4,7 @@
     <string name="app_id">1430888993824963</string>
     <string name="get_started">Get Started</string>
     <string name="settings">Settings</string>
+    <string name="friends_list_header">My Friends</string>
     <string name="com_facebook_dialogloginactivity_ok_button">OK</string>
     <string name="com_facebook_loginview_log_out_button">Log out</string>
     <string name="com_facebook_loginview_log_in_button">Log in with Facebook</string>

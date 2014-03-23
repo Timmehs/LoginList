@@ -133,7 +133,7 @@ public class FriendlistFragment extends Fragment {
         request.executeAsync();
     }
 
-    /* Parses data from facebook request response into friend objects, stores to
+    /* This method parses data from facebook request response into friend objects, stores to
     *  List<Friends> friends.
     */
    private void parseFriends(Response response) {
