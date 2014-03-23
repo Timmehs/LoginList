@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 import com.facebook.*;
 
 import java.security.MessageDigest;
@@ -35,7 +36,8 @@ public class MainActivity extends FragmentActivity {
 
     private boolean isResumed = false;
     private static final String TAG = "MainActivity";
-    private Session session;
+
+    public static Session session;
 
 
 
@@ -142,6 +144,9 @@ public class MainActivity extends FragmentActivity {
         } else {
             // otherwise present the splash screen
             // and ask the person to login.
+            for (int i = 0; i < backStackSize; i++) {
+                manager.popBackStack();
+            }
             showFragment(LOGIN, false);
         }
     }
@@ -183,6 +188,13 @@ public class MainActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+        String report;
+        if(Session.getActiveSession().isOpened()) {
+            report = "Session opened";
+        } else {
+            report = "Session not opened, login failed?";
+        }
+        Toast.makeText(this, report, Toast.LENGTH_SHORT).show();
     }
 
     @Override
