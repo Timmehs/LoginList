@@ -1,4 +1,4 @@
-LoginList
+![alt tag] (https://raw.githubusercontent.com/Timmehs/LoginList/master/res/drawable/icon.png)  LoginList
 =========
 
 A simple exercise using Facebook SDK 3.7.
